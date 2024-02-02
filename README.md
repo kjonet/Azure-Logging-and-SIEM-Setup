@@ -59,3 +59,83 @@ Next, under 'Server' settings, select 'Edit configuration' under the 'Log Analyt
 Under the 'Continuous export' settings, we're going to enable this particular setting that exports alerts into the log analytics workspace. 
 
 ![img](https://i.imgur.com/EICfFiI.png)
+
+## Enable Log Collection for VMs and Network Security Groups
+
+In this section, we're going to configure our virtual machines and their Network Security Groups to forward their logs to the Log Analytics workspace. To begin, we're going to create a storage account. The storage account will be used to capture flow logs from the Network Security Groups that are attached to the Azure virtual machines. A Network Security Group is an Azure-based firewall that monitors traffic within the virtual machines. Flow logs are the traffic going in and out of the virtual machine. Within the Azure portal, search for 'Storage account' and name it. Just like when creating the Log Analytics workspace, the region must be the same as the region you assigned to your resource group. 
+
+Next, we'll enable flow logs for our Network Security Groups. Go to the Azure portal and type in 'nsg'. Select the Virtual machine you want to create flow logs for. In this instance, I'm going to select my 'windows-vm-nsg'
+Within the 'Create a flow log' page, under the 'Basics' tab, assign the appropriate storage account and keep the retention at 0.
+
+Select the 'Analytics' tab, select 'Version 2' under 'Traffic Analytics', and check 'Enable Traffic Analytics'. This allows Defender for Cloud to analyze traffic and sort it. Set the 'Traffic Analytics processing interval' to every 10 minutes. Review and Create. 
+
+<h3>Configuring Data Collection Rules</h3>
+
+Next, we'll proceed to configure data collection rules. These rules will help specify what logs from the virtual machines will need to be forwarded to the log analytics workspace. We're going to have to be strategic on what logs we'd like to be forwarded because forwarding too many logs can increase costs for a company. 
+To get started, head over to your Log Analytics workspace. Under 'Settings' select 'Agents'. An agent is a type of software installed on the virtual machines that will be used to collect logs. Once selected, click 'Data Collection Rules'. 
+
+![img](https://i.imgur.com/5cB2txQ.png)
+
+At the 'Data collection rules' window, give it a 'Rule Name', and select the resource group, subscription, and appropriate region. Next, select the platform you wish to target. In this instance, we are going to select 'Windows'. 
+
+![img](https://i.imgur.com/9OD8SqX.png)
+
+Under the 'Resources' tab, add your resource group and select the Windows virtual machine. Next, head over to the 'Collect and deliver' tab. 
+
+To specify the logs you wish to collect, select 'Add data source'. Your data source should be 'Windows Event Log'. We're going to collect logs from Application and Security logs. Next, select the destination which should be your Log Analytics workspace that we set up earlier. 
+
+![img](https://i.imgur.com/DrWQONr.png)
+
+Finally, go ahead and create your Data Collection Rule. 
+
+<h3>Windows Firewall Data Collection Rule</h3>
+
+We're going to create one more rule that will enable us to capture logs from Windows Firewall. Head over back to the Log Analytics workspace, select your workspace, then 'Agents', and click on 'Data Collection Rules' again. 
+We're going to select the rule we just created, then select 'Data Source'. Next, select 'Windows Event Logs', and at the 'Add data source' window, select 'Custom'. Within the field that says "Use XPath queries to filter event logs and limit data collection." We are going to use a special xpath query [here](https://github.com/joshmadakor1/Cyber-Course-v2/blob/main/Special-Windows-Event-Data-Collection-Rules/Rules.txt) (Provided by cybersecurity professional, Josh Madakor) Add both queries to the XPath field. 
+
+The following query will be used for malware detection: 
+- // Windows Defender Malware Detection XPath Query
+Microsoft-Windows-Windows Defender/Operational!*[System[(EventID=1116 or EventID=1117)]]
+
+While this query will be used for firewall tampering: 
+- // Windows Firewall Tampering Detection XPath Query
+Microsoft-Windows-Windows Firewall With Advanced Security/Firewall!*[System[(EventID=2003)]]
+
+Add both XPath queries and save your settings. 
+
+Lastly, Microsoft Defender for Cloud has a great feature that automatically installs agents onto your virtual machines. Let's make sure our Windows agent is installed by going to the 'Log Analytics workspace' and selecting 'Agents'. Again, having an agent installed is crucial to make sure our logs are being forwarded to our workspace. 
+
+![img](https://i.imgur.com/Hsnv10L.png)
+
+## Testing Our Connection
+
+Let's take a look to see if we were able to capture any logs coming from our Windows virtual machine. Go into the 'Log Analytics workspace', head over to 'Logs', and let's type in a simple query using KQL. 
+- SecurityEvent
+  | where EventID == 4625
+
+  Your results may produce something similar to this:
+
+  ![img](https://i.imgur.com/sRWOPJP.png)
+
+  This shows that our logs are coming in!
+
+## Windows World Map For Failed RDP Authentications 
+
+Now that we've got our logs flowing from our Windows virtual machine, we can create a map that displays where attackers might be trying to authenticate from. To get started, head over to Microsoft Sentinel. Select your Log Analytics Workspace that was created earlier. To the left, under 'Threat Management', select 'Workbooks'. This is where our maps will be created. If there are already pre-made elements in your workbook, go ahead and delete them. Next, select 'Add' and 'Add Query'. Select the 'Advanced Editor' tab and paste the following JSON script found [here](https://github.com/joshmadakor1/Cyber-Course-v2/blob/main/Sentinel-Maps(JSON)/windows-rdp-auth-fail.json) (Provided by cybersecurity professional, Josh Madakor) This attack map will show RDP failures from around the world.  Your attack map should look similar to this: 
+
+![img](https://i.imgur.com/GYh0j4C.png) 
+
+*Please note that my Windows VM has been running for 24hrs. 
+
+From Microsoft Sentinel, we were able to query logs from the Log Analytics workspace that generated the attack map in our workbook. 
+
+![img](https://i.imgur.com/xQ1qI65.png)
+
+## Conclusion
+
+For this project, we were able to set up and deploy our own SEIM within Azure. The Log Analytics workspace serves as a central hub for collecting and analyzing data as it integrates with Microsoft Defender for the Cloud to ensure comprehensive threat detection. Once a workspace is set up and a connection is established through Microsoft Defender for Cloud, the amount of threat hunting one can do is infinite. With the creation of a customized workbook, tailored to your VMs, we can get a visualized look of the geodata we ingested. Enabling us to query locations from around the world. We were able to showcase Microsoft Sentinel's versatility in consolidating security insights, streamlining threat detection, and offering a centralized solution for security operations. As we navigate the evolving landscape of cybersecurity, Microsoft Sentinel emerges as a pivotal tool that helps to elevate any organization's overall security posture.
+
+
+
+
+
