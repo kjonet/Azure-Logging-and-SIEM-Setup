@@ -133,8 +133,7 @@ From Microsoft Sentinel, we were able to query logs from the Log Analytics works
 
 ## Conclusion
 
-For this project, we were able to set up and deploy our own SEIM within Azure. The Log Analytics workspace serves as a central hub for collecting and analyzing data as it integrates with Microsoft Defender for the Cloud to ensure comprehensive threat detection. Once a workspace is set up and a connection is established through Microsoft Defender for Cloud, the amount of threat hunting one can do is infinite. With the creation of a customized workbook, tailored to your VMs, we can get a visualized look of the geodata we ingested. Enabling us to query locations from around the world. We were able to showcase Microsoft Sentinel's versatility in consolidating security insights, streamlining threat detection, and offering a centralized solution for security operations. As we navigate the evolving landscape of cybersecurity, Microsoft Sentinel emerges as a pivotal tool that helps to elevate any organization's overall security posture.
-
+For this project, we were able to set up our own SEIM for deployment within Azure. The Log Analytics workspace serves as a central hub for collecting and analyzing data as it integrates with Microsoft Defender for the Cloud to ensure comprehensive threat detection. Once a workspace is set up and a connection is established through Microsoft Defender for Cloud, the amount of threat hunting one can do is infinite. With the creation of a customized workbook, tailored to your VMs, we can get a visualized look of the geodata we ingested. Enabling us to query locations from around the world. 
 
 
 
