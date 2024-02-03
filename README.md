@@ -1,7 +1,7 @@
 ![img](https://i.imgur.com/FpRKtSe.png)
 
 # Azure-Logging-and-SIEM-Setup
-Microsoft Sentinel is a cloud-based SEIM solution used to analyze large amounts of data across multiple platforms. Microsoft Sentinel is designed to detect, investigate, and respond to any potential cyber threats that may compromise your organization. This will be a demonstration on how to create a central log repository using the Analytics Workspace within Azure and then we will connect that workspace to Microsoft Sentinel so that logs can be ingested. Once ingested, we'll be able to observe logs from multiple resources. We'll also be ingesting Geo data that will translate on a map giving us insight as to where attacks might originate from around the world. 
+Microsoft Sentinel is a cloud-based SEIM solution used to analyze large amounts of data across multiple platforms. Microsoft Sentinel is designed to detect, investigate, and respond to any potential cyber threats that may compromise your organization. This will be a demonstration on how to create a central log repository using the Analytics Workspace within Azure and then we will connect that workspace to Microsoft Sentinel so that logs can be ingested. Once ingested, we'll be able to observe logs from multiple resources. We'll also be ingesting Geo data that will translate on a map giving us insight as to where attacks might originate from around the world. This pivotal setup will enable us to use Microsoft Sentenil for threat hunting which will be documented in a future repository.  
 
 
 ![img](https://i.imgur.com/jDPbH8A.png)
